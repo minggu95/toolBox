@@ -279,7 +279,6 @@ public class testMain {
 //            }
 //        }
 //        System.out.println(map);
-
         SCProductServiceImpl.dataConditionOprate();
     }
 

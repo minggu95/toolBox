@@ -81,34 +81,27 @@ public class HttpUtils {
 		return result;
 	}
 
-	public static String dopost(String postURL, String cookies) {
+	public static String dopost(String postURL, NameValuePair[] data, String cookies) {
 		String result = "";
 		try {
 			PostMethod postMethod = null;
 			postMethod = new PostMethod(postURL) ;
-			postMethod.setRequestHeader("accept", "application/json, text/javascript, */*; q=0.01");
-			postMethod.setRequestHeader("connection", "Keep-Alive");
-			postMethod.setRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36");//（主要是这一句）
+			postMethod.setRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36");//（主要是这一句）
 			postMethod.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8") ;
-			postMethod.setRequestHeader("Accept-Language", "zh-CN,zh;q=0.9");
+			postMethod.setRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01") ;
+			postMethod.setRequestHeader("Host", "ypnew.hnggzyjy.cn:9080") ;
+			postMethod.setRequestHeader("Origin", "http://ypnew.hnggzyjy.cn:9080") ;
+			postMethod.setRequestHeader("Connection", "keep-alive") ;
 			postMethod.setRequestHeader("Cookie", cookies) ;
 			//参数设置，需要注意的就是里边不能传NULL，要传空字符串
-			NameValuePair[] data = {
-					new NameValuePair("companyName","wadwqer")
-			};
+
 			postMethod.setRequestBody(data);
 
 			org.apache.commons.httpclient.HttpClient httpClient = new org.apache.commons.httpclient.HttpClient();
 			int response = httpClient.executeMethod(postMethod); // 执行POST方法
-			BufferedReader in = new BufferedReader(new InputStreamReader(postMethod.getResponseBodyAsStream(), "utf-8"));
-			StringBuffer sb = new StringBuffer();
-			int len;
-			while ((len = in.read()) != -1) {
-				sb.append((char) len);
-			}
-			result = sb.toString();
-			in.close();
-			postMethod.releaseConnection();
+			result = postMethod.getResponseBodyAsString() ;
+			System.out.println(response);
+			System.out.println(result);
 		} catch (Exception e) {
 			// logger.info("请求异常"+e.getMessage(),e);
 			throw new RuntimeException(e.getMessage());

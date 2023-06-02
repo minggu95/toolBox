@@ -58,6 +58,39 @@ public class HttpUtils {
 		return result;
 	}
 
+	//获取接口数据
+	public static String httpPost(String url ,String requestBody, String cookie){
+		String result = null;
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		HttpPost httpPost = new HttpPost(url);
+		httpPost.addHeader("Content-type","application/x-www-form-urlencoded;charset=utf-8");
+		httpPost.setHeader("Cookie", cookie);
+		httpPost.setEntity(new StringEntity(requestBody, Charset.forName("UTF-8").toString()));
+		HttpResponse httpResponse = null;
+		try {
+			httpResponse = httpclient.execute(httpPost);
+			HttpEntity entity = httpResponse.getEntity();
+			System.out.println(httpResponse.getStatusLine());
+			if(entity!=null){
+				result = EntityUtils.toString(entity,Charset.forName("UTF-8").toString());
+			}
+		} catch (ClientProtocolException e) {
+			logger.error("接口异常错误:" + e.getMessage());
+		} catch (IOException e) {
+			logger.error("接口异常错误:" + e.getMessage());
+		} finally {
+			try {
+				// 释放资源
+				if (httpclient != null) {
+					httpclient.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+
 	public static String dopost(String postURL, NameValuePair[] data) {
 		String result = "";
 		try {

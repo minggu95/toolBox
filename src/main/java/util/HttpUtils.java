@@ -7,6 +7,7 @@ import java.nio.charset.Charset;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -130,6 +131,35 @@ public class HttpUtils {
 
 			postMethod.setRequestBody(data);
 
+			org.apache.commons.httpclient.HttpClient httpClient = new org.apache.commons.httpclient.HttpClient();
+			int response = httpClient.executeMethod(postMethod); // 执行POST方法
+			result = postMethod.getResponseBodyAsString() ;
+			System.out.println(response);
+			System.out.println(result);
+		} catch (Exception e) {
+			// logger.info("请求异常"+e.getMessage(),e);
+			throw new RuntimeException(e.getMessage());
+		}
+		return result;
+	}
+
+	public static String dopost(String postURL, NameValuePair[] data, String cookies, String referer) {
+		String result = "";
+		try {
+			if (postURL.startsWith("https")) {
+				Protocol _protocol = new Protocol("https", new ProtocolSSLFactory(), 443);
+				Protocol.registerProtocol("https", _protocol);
+			}
+			PostMethod postMethod = null;
+			postMethod = new PostMethod(postURL) ;
+			postMethod.setRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.5359.125 Safari/537.36");//（主要是这一句）
+			postMethod.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8") ;
+			postMethod.setRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01") ;
+			postMethod.setRequestHeader("Referer", referer) ;
+			postMethod.setRequestHeader("Connection", "keep-alive") ;
+			postMethod.setRequestHeader("Cookie", cookies) ;
+			//参数设置，需要注意的就是里边不能传NULL，要传空字符串
+			postMethod.setRequestBody(data);
 			org.apache.commons.httpclient.HttpClient httpClient = new org.apache.commons.httpclient.HttpClient();
 			int response = httpClient.executeMethod(postMethod); // 执行POST方法
 			result = postMethod.getResponseBodyAsString() ;
